@@ -88,10 +88,7 @@ for star in n_star:
     ages_bh = [edad for _, edad, _ in estrellas_bh]
 
     fig, ax = plt.subplots()
-    ax.hist(ages_ms, bins=20, alpha=0.5, color='orange', label='Main Sequence')
-    ax.hist(ages_wd, bins=20, alpha=0.5, color='salmon', label='White Dwarfs ')
-    ax.hist(ages_ns, bins=20, alpha=0.5, color='royalblue', label='Neutron Stars ')
-    ax.hist(ages_bh, bins=20, alpha=0.5, color='black', label='Black Holes')
+    ax.hist([ages_ms, ages_wd, ages_ns, ages_bh], bins=20, alpha=0.5, color=['orange', 'salmon', 'royalblue', 'black'], label=['Main Sequence', 'White Dwarfs', 'Neutron Stars', 'Black Holes'], density=True)
 
     ax.set_xlabel('Age')
     ax.set_ylabel('Frequency')
