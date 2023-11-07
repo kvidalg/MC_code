@@ -71,10 +71,9 @@ for star in n_star:
     final_masses_bh = [masa for masa, _, _ in estrellas_bh]
 
     fig, ax = plt.subplots()
-    ax.hist(final_masses_ms, bins=20, alpha=0.5, color='orange', label='Main Sequence')
-    ax.hist(final_masses_wd, bins=20, alpha=0.5, color='salmon', label='White Dwarfs')
-    ax.hist(final_masses_ns, bins=20, alpha=0.5, color='royalblue', label='Neutron Stars')
-    ax.hist(final_masses_bh, bins=20, alpha=0.5, color='black', label='Black Holes')
+    all_final_masses = final_masses_ms + final_masses_wd + final_masses_ns + final_masses_bh
+    ax.hist([final_masses_ms, final_masses_wd, final_masses_ns, final_masses_bh], bins=20, alpha=0.5, color=['orange', 'salmon', 'royalblue', 'black'], label=['Main Sequence', 'White Dwarfs', 'Neutron Stars', 'Black Holes'], density=True, stacked=True)
+
 
     ax.set_xlabel('Final Mass')
     ax.set_ylabel('Frequency')
