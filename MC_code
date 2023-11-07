@@ -1,0 +1,116 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+n_star = [100, 1000, 10000, 1000000]
+
+for star in n_star:
+    masa_min = 0.01
+    masa_max = 100
+    gen_masa = np.random.uniform(masa_min, masa_max, star)
+    edad_max = 10**7
+    edad = np.random.uniform(0, edad_max, num_estrellas)
+    datos_estrellas = [(masa, edad) for masa, edad in zip(gen_masa, edad)]
+
+    def MS_lifetime(masa):
+        t_lifetime = (10**10) / masa**(2.5)
+        return t_lifetime
+
+    estrellas_remanentes = []
+    estrellas_ms = []
+
+    for masa, edad in datos_estrellas:
+        t_lifetime = MS_lifetime(masa)
+
+        if t_lifetime > edad:
+            estrellas_remanentes.append((masa, edad))
+        else:
+            estrellas_ms.append((masa, edad))
+
+    def masa_final(m_i):
+        if m_i < 8:
+            m_f_WD = 0.109 * m_i + 0.394
+            return m_f_WD, "wd", m_i
+        elif 9 < m_i < 13:
+            m_f_NS1 = 2.24 + 0.508 * (m_i - 14.75) + 0.125 * (m_i - 14.75)**2 + 0.011 * (m_i - 14.75)**3
+            return m_f_NS1, "ns", m_i
+        elif 13 < m_i < 15:
+            m_f_NS2 = 0.123 + 0.112 * m_i
+            return m_f_NS2, "ns", m_i
+        elif 15 < m_i < 17.8:
+            m_f_NS3 = 0.996 + 0.384 * m_i
+            return m_f_NS3, "ns", m_i
+        elif 17.8 < m_i < 18.5:
+            m_f_NS4 = -0.02 + 0.1 * m_i
+            return m_f_NS4, "ns", m_i
+        elif 15 < m_i < 40:
+            m_f_BH1 = 15.52 - 0.3294 * (m_i - 25.97) - 0.02121 * ((m_i - 25.97)**2) + 0.003120 * ((m_i - 25.97)**3)
+            return m_f_BH1, "bh", m_i
+        elif 45 < m_i < 120:
+            m_f_BH2 = 5.697 + (7.8598 * 10**8) * ((m_i)**(-4.858))
+            return m_f_BH2, "bh", m_i
+        else:
+            return None, None, m_i
+
+
+    estrellas_wd = []
+    estrellas_ns = []
+    estrellas_bh = []
+
+    for masa, edad in estrellas_remanentes:
+        masa_f, clasificacion, masa_inicial = masa_final(masa)
+        if clasificacion == "wd":
+            estrellas_wd.append((masa_f, edad, masa_inicial))
+        elif clasificacion == "ns":
+            estrellas_ns.append((masa_f, edad, masa_inicial))
+        elif clasificacion == "bh":
+            estrellas_bh.append((masa_f, edad, masa_inicial))
+
+    final_masses_ms = [masa for masa, _ in estrellas_ms]
+    final_masses_wd = [masa for masa, _, _ in estrellas_wd]
+    final_masses_ns = [masa for masa, _, _ in estrellas_ns]
+    final_masses_bh = [masa for masa, _, _ in estrellas_bh]
+
+    fig, ax = plt.subplots()
+    ax.hist(final_masses_ms, bins=20, alpha=0.5, color='orange', label='Main Sequence')
+    ax.hist(final_masses_wd, bins=20, alpha=0.5, color='salmon', label='White Dwarfs')
+    ax.hist(final_masses_ns, bins=20, alpha=0.5, color='royalblue', label='Neutron Stars')
+    ax.hist(final_masses_bh, bins=20, alpha=0.5, color='black', label='Black Holes')
+
+    ax.set_xlabel('Final Mass')
+    ax.set_ylabel('Frequency')
+    ax.legend()
+    plt.title(f'Histograma para {num_estrellas} estrellas')
+    plt.show()
+
+    ages_ms = [edad for _, edad in estrellas_ms]
+    ages_wd = [edad for _, edad, _ in estrellas_wd]
+    ages_ns = [edad for _, edad, _ in estrellas_ns]
+    ages_bh = [edad for _, edad, _ in estrellas_bh]
+
+    fig, ax = plt.subplots()
+    ax.hist(ages_ms, bins=20, alpha=0.5, color='orange', label='Main Sequence')
+    ax.hist(ages_wd, bins=20, alpha=0.5, color='salmon', label='White Dwarfs ')
+    ax.hist(ages_ns, bins=20, alpha=0.5, color='royalblue', label='Neutron Stars ')
+    ax.hist(ages_bh, bins=20, alpha=0.5, color='black', label='Black Holes')
+
+    ax.set_xlabel('Age')
+    ax.set_ylabel('Frequency')
+    ax.legend()
+    plt.title(f'Histograma de edades para {num_estrellas} estrellas')
+    plt.show()
+
+    num_wd = len(estrellas_wd)
+    num_ns = len(estrellas_ns)
+    num_bh = len(estrellas_bh)
+    num_ms = len(estrellas_ms)
+    total_estrellas = num_wd + num_ns + num_bh + num_ms
+
+    porcentaje_wd = (num_wd / total_estrellas) * 100
+    porcentaje_ns = (num_ns / total_estrellas) * 100
+    porcentaje_bh = (num_bh / total_estrellas) * 100
+    porcentaje_ms = (num_ms / total_estrellas) * 100
+
+    print(f'Estrellas White Dwarfs (WD): {num_wd} ({porcentaje_wd:.2f}%)')
+    print(f'Estrellas Neutron Stars (NS): {num_ns} ({porcentaje_ns:.2f}%)')
+    print(f'Estrellas Black Holes (BH): {num_bh} ({porcentaje_bh:.2f}%)')
+    print(f'Estrellas Main Sequence (MS): {num_ms} ({porcentaje_ms:.2f}%)')
